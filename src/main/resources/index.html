@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Sharing Receiver</title>
+</head>
+<body>
+
+<canvas id="canvas" width="1360" height="768"></canvas>
+<script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+
+    const socket = new WebSocket('ws://IP_PC:8484');
+    socket.onmessage = function (event) {
+        const blob = event.data;
+        const reader = new FileReader();
+        reader.onloadend = function () {
+            const image = new Image();
+            image.onload = function () {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            };
+            image.src = reader.result;
+        };
+        reader.readAsDataURL(blob);
+    };
+</script>
+</body>
+</html>
